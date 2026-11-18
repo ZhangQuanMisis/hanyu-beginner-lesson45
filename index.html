@@ -768,17 +768,12 @@ function flowerCelebration(){
 }
 
 function finalScreen(){
-  const total = Object.values(S.stars).reduce((a,b)=>a+b,0);
   $app.innerHTML = `
   <div class="screen">
     <div class="topbar">
       <button class="quit" onclick="home()">←</button>
       <span style="font-weight:800;font-size:18px">🏅 毕业证书 · Сертификат</span>
       <span style="width:26px"></span>
-    </div>
-    <div style="background:rgba(255,255,255,.15);border-radius:14px;padding:12px 14px;margin-bottom:14px">
-      <div style="color:#fff;font-size:12.5px;margin-bottom:8px">✏️ 输入你的名字，会印在证书上 / Введи имя — оно будет на сертификате</div>
-      <input class="name-input" id="nameInput" placeholder="你的名字 / твоё имя" value="${saved.name||''}" maxlength="14">
     </div>
     <img id="certImg" class="cert-img" alt="证书卡片">
     <canvas id="certCanvas" style="display:none"></canvas>
@@ -791,12 +786,6 @@ function finalScreen(){
       长按图片也能保存到手机相册<br>Нажми и удерживай картинку, чтобы сохранить
     </div>
   </div>`;
-  const inp=document.getElementById('nameInput');
-  inp.addEventListener('input',()=>{
-    saved.name=inp.value;
-    localStorage.setItem('hanyu_game_lesson45_v1', JSON.stringify({stars:S.stars,name:inp.value}));
-    renderCert();
-  });
   renderCert();
 }
 
@@ -896,15 +885,18 @@ function drawCert(name, total, score, done){
 
   const d=new Date();
   x.textAlign='left'; x.fillStyle='#8a7f9a'; x.font=f(22);
-  x.fillText('第四课 电影开始了吗 · 第五课 办公楼在哪儿',150,1506);
+  x.fillText('第四课 电影开始了吗 · 第五课 办公楼在哪儿',150,1496);
   x.fillStyle='#a89b85'; x.font=f(21);
-  x.fillText('Урок 4 · Урок 5   ·   '+d.getFullYear()+'/'+ (d.getMonth()+1) +'/'+ d.getDate(),150,1542);
+  x.fillText('Урок 4 · Урок 5   ·   '+d.getFullYear()+'/'+ (d.getMonth()+1) +'/'+ d.getDate(),150,1530);
   x.save(); x.translate(900,1510); x.rotate(-8*Math.PI/180);
   x.fillStyle='#cf4a42'; rr(-52,-52,104,104,14); x.fill();
   x.strokeStyle='rgba(255,255,255,.8)'; x.lineWidth=4; rr(-43,-43,86,86,10); x.stroke();
   x.fillStyle='#fff'; x.textAlign='center'; x.font=f(26,'bold');
   x.fillText('汉语',0,-7); x.fillText('通关',0,29);
   x.restore();
+  // 制作者署名：紧跟红色「汉语通关」印章左侧，右对齐避免与日期行重叠
+  x.textAlign='right'; x.fillStyle='#6a4bd0'; x.font=f(22,'bold');
+  x.fillText('游戏制作者：MISIS的张老师',832,1532);
 }
 
 function saveCert(){
