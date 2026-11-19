@@ -153,8 +153,9 @@
   }
   .listen-btn:active { transform:scale(.95); }
   .listen-btn:disabled { opacity:.5; cursor:default; transform:none; }
-  .match-wrap { display:flex; gap:12px; margin:6px 0 4px; }
-  .match-col { flex:1; display:flex; flex-direction:column; gap:10px; min-width:0; }
+  .match-wrap { display:flex; gap:26px; margin:6px 0 4px; position:relative; }
+  .match-svg { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:5; overflow:visible; }
+  .match-col { flex:1; display:flex; flex-direction:column; gap:10px; min-width:0; position:relative; z-index:6; }
   .match-h { font-size:12.5px; color:#fff8ec; opacity:.9; text-align:center; margin-bottom:2px; }
   .match-item { background:rgba(255,255,255,.94); border:2px solid rgba(124,92,214,.25); border-radius:13px; padding:13px 6px; color:#4a2f8f; font-size:16px; font-weight:800; line-height:1.25; word-break:break-word; transition:transform .12s, background .12s; }
   .match-item:active { transform:scale(.96); }
@@ -163,6 +164,17 @@
   .match-item.correct { border-color:#5bbf87; }
   .match-item.dim { opacity:.55; }
   .match-tip { font-size:12px; color:#fff8ec; opacity:.85; text-align:center; margin:2px 0 10px; }
+  /* 错题回顾 */
+  .review-box { background:rgba(28,18,74,.42); border:1.5px solid rgba(255,226,122,.5); border-radius:16px; padding:13px 14px; margin-bottom:14px; text-align:left; width:100%; max-width:520px; }
+  .review-title { color:#ffe27a; font-size:16px; font-weight:800; margin-bottom:3px; }
+  .review-count { font-size:12px; background:rgba(255,226,122,.2); padding:2px 8px; border-radius:20px; margin-left:4px; }
+  .review-hint { color:#cfc6f0; font-size:12px; margin-bottom:9px; opacity:.9; }
+  .review-item { background:rgba(255,255,255,.1); border-radius:11px; padding:9px 11px; margin-bottom:8px; }
+  .review-q { color:#fff; font-size:13.5px; font-weight:700; line-height:1.45; }
+  .review-sub { color:#c9c0e8; font-size:11.5px; margin:2px 0 4px; opacity:.85; }
+  .review-a { color:#a8ecc4; font-size:12.5px; margin-top:4px; line-height:1.45; }
+  .review-ex { color:#f0e7c8; font-size:11.5px; margin-top:3px; line-height:1.5; opacity:.95; }
+  .cert-title { color:#ffe27a; font-size:16px; font-weight:800; text-align:center; margin:2px 0 10px; }
 </style>
 </head>
 <body>
@@ -206,9 +218,9 @@ const LEVELS = [
     {type:"mcq", q:"「电影开始了吗？还没，还有一刻钟。」的意思是：", sub:"Выбери правильный перевод",
      opts:["«Фильм начался?» — «Ещё нет, осталось пятнадцать минут.»","«Фильм начался?» — «Ещё нет, осталось полчаса.»","«Фильм начался?» — «Да, начался четверть часа назад.»","«Фильм начался?» — «Нет, начнётся в половине шестого.»"], a:0,
      ex:"「还没」= ещё нет；「一刻钟」= 15 минут（一刻 = 15 分钟）。/ «还没» означает «ещё нет», «一刻钟» — 15 минут."},
-    {type:"match", q:"连一连：词语和拼音配对", sub:"Соедини слово и его пиньинь",
-     left:["一起","一个","571","十一"], right:["shíyī","yí gè","wǔ qī yāo","yìqǐ"], a:[3,1,2,0],
-     ex:"一起 yìqǐ；一个 yí gè（「一」在第四声前读 yí）；571 读 wǔ qī yāo（号码里的「一」读 yāo）；十一 shíyī。/ В номерах «一» читается yāo, поэтому 571 — wǔ qī yāo."}
+    {type:"match", q:"连一连：「一」的读音", sub:"Соедини каждое слово с чтением первого иероглифа в нём",
+     left:["一起","一个","571","十一"], right:["yī","yí","yì","yāo"], a:[2,1,3,0],
+     ex:"「一」单念或词末读 yī（十一 shíyī）；第四声前读 yí（一个 yí gè）；第一、二、三声前读 yì（一起 yìqǐ）；号码中读 yāo（571 wǔ qī yāo）。/ «一»: yī单独, yí перед 4-м тоном, yì перед 1/2/3-м, yāo в номерах."}
   ]
 },
 {
@@ -304,8 +316,9 @@ const LEVELS = [
      opts:["周末","星期天","星期一","晚上"], a:0,
      ex:"周末 zhōumò — выходные：星期六和星期日。/ Выходные: суббота и воскресенье."},
     {type:"order", q:"把词语排成正确的句子", sub:"Составь предложение из слов",
-     words:["你和马小军","一起来我家","玩儿吧"], a:"你和马小军一起来我家玩儿吧",
-     ex:"「和…一起来…吧」是邀请的句式。/ Это конструкция приглашения."},
+     words:["你","和","马小军","一起","来","我家","玩儿","吧"], a:"你和马小军一起来我家玩儿吧",
+     alts:["马小军和你一起来我家玩儿吧","你和马小军来我家一起玩儿吧","马小军和你来我家一起玩儿吧"],
+     ex:"「A和B一起来…吧」是邀请句式；A与B可互换，「一起」也可放在「玩儿」前。/ «和» соединяет двух людей: можно поменять местами; «一起» можно поставить перед «玩儿»."},
     {type:"mcq", q:"「七号楼六〇一室」中的「一」读什么？", sub:"Как читается цифра один в номере?",
      opts:["yī","yāo","èr","líng"], a:1,
      ex:"号码中的「1」读 yāo：六〇一室 = liù líng yāo shì。/ В номерах «1» читается как «yāo»."},
@@ -342,16 +355,16 @@ const LEVELS = [
     {type:"mcq", q:"「我去一下洗手间」中的「一下」表示什么？", sub:"Что означает это выражение?",
      opts:["количество равно одному","действие короткое, тон вежливый","происходило в прошлом","происходит часто"], a:1,
      ex:"「一下」让动作显得时间短、语气缓和：我问一下、我去一下洗手间。/ «一下» делает действие кратким и смягчает тон."},
-    {type:"mcq", q:"语法题：「我不想喝咖啡」中，否定「想」用什么？", sub:"Грамматика: как отрицать этот глагол желания?",
+    {type:"mcq", q:"Я не хочу пить кофе. Какое отрицание должно быть в переводе на китайском языке?", sub:"",
      opts:["用「没」","用「不」","用「别」","用「没有」"], a:1,
-     ex:"否定能愿动词「想」用「不」：我不想喝咖啡。否定「了」和「有」才用「没」。/ Глагол «想» отрицается словом «不»: 我不想喝咖啡."}
+     ex:"能愿动词「想」的否定用「不」：我不想喝咖啡。否定「了」和「有」才用「没」。/ Глагол «想» отрицается словом «不»: 我不想喝咖啡."}
   ]
 }
 ];
 
 /* ================== 游戏状态 ================== */
 const $app = document.getElementById('app');
-let S = { level:0, qi:0, hearts:3, score:0, combo:0, correct:0, wrong:0, answered:false, stars:{}, optOrder:[] };
+let S = { level:0, qi:0, hearts:3, score:0, combo:0, correct:0, wrong:0, answered:false, stars:{}, optOrder:[], wrongList:[] };
 const saved = JSON.parse(localStorage.getItem('hanyu_game_lesson45_v1')||'{}');
 S.stars = saved.stars || {};
 
@@ -434,8 +447,8 @@ function home(){
       <span class="ru">③ В конце уровня — до 3 звёзд ⭐ за точность. Всего можно собрать 15 звёзд.</span>
       <div class="r-zh">④ 每过一关得到 1 枝 🌸，五关集齐后合成一束 💐</div>
       <span class="ru">④ За каждый пройденный уровень ты получаешь один цветок 🌸. Собери пять — и они превратятся в букет 💐.</span>
-      <div class="r-zh">⑤ 听力题自己点绿色按钮播放，每题可听 2 次；微信里可能没声音，请用 Safari 或 Chrome 打开 🔊</div>
-      <span class="ru">⑤ На вопросах со слушанием сам нажми зелёную кнопку: каждое задание можно прослушать 2 раза. Во встроенном браузере WeChat звук может не работать — открой страницу в Safari или Chrome.</span>
+      <div class="r-zh">⑤ 听力题自己点绿色按钮播放，每题可听 3 次；微信里可能没声音，请用 Safari 或 Chrome 打开 🔊</div>
+      <span class="ru">⑤ На вопросах со слушанием сам нажми зелёную кнопку: каждое задание можно прослушать 3 раза. Во встроенном браузере WeChat звук может не работать — открой страницу в Safari или Chrome.</span>
     </div>
     ${allDone?`<div style="margin-top:16px;color:#ffe27a;font-size:15px;font-weight:700">🏅 已全部通关！总星数 ${total}/15</div>`:''}
   </div>`;
@@ -492,6 +505,7 @@ function levelIntro(i){
 
 function startLevel(i){
   S = Object.assign(S, {level:i, qi:0, hearts:3, combo:0, correct:0, wrong:0, answered:false});
+  S.wrongList = (S.wrongList||[]).filter(w=>w.level!==i); // 重闯本关时清除旧错题
   S.levelScore = 0;
   renderQ();
 }
@@ -524,24 +538,26 @@ function renderQ(){
     S.matchLeftOrder = shuffle(q.left.map((_,i)=>i));
     S.matchRightOrder = shuffle(q.right.map((_,i)=>i));
     body = `
-      <div class="match-wrap">
+      <div class="match-wrap" id="matchWrap">
+        <svg id="matchSvg" class="match-svg"></svg>
         <div class="match-col">
           <div class="match-h">词语 / Слова</div>
           ${S.matchLeftOrder.map((li)=>`<button class="match-item" id="m-l${li}" onclick="tapMatch('l',${li})">${q.left[li]}</button>`).join('')}
         </div>
         <div class="match-col">
-          <div class="match-h">拼音 / Пиньинь</div>
+          <div class="match-h">「一」的读音 / Чтение «一»</div>
           ${S.matchRightOrder.map((ri)=>`<button class="match-item" id="m-r${ri}" onclick="tapMatch('r',${ri})">${q.right[ri]}</button>`).join('')}
         </div>
       </div>
       <div class="match-tip">点左边一个，再点右边对应的 / Сначала слева, потом справа</div>
       <div id="fb"></div>
       <button class="btn btn-next" id="checkBtn" onclick="checkMatch()">✅ 检查答案</button>`;
+    S.matchLines = {};
   } else {
     // 每次出题都重新打乱选项顺序，正确答案位置随机
     S.optOrder = shuffleOpts(q.opts, q.a);
     const listen = q.type==='listen'
-      ? `<button class="listen-btn" id="listenBtn" onclick="listenTap()">🔊 播放发音（可听 2 次）</button><div id="listenFallback" style="font-size:13px;color:#fff8ec;margin:-10px 0 14px;opacity:.85"></div>`
+      ? `<button class="listen-btn" id="listenBtn" onclick="listenTap()">🔊 播放发音（可听 3 次）</button><div id="listenFallback" style="font-size:13px;color:#fff8ec;margin:-10px 0 14px;opacity:.85"></div>`
       : '';
     body = `${listen}
       <div id="opts">${S.optOrder.map((orig,disp)=>
@@ -561,6 +577,50 @@ function renderQ(){
   </div>`;
   if(q.type==='listen'){ S.listenCount = 0; }
 }
+/* 在两个按钮之间画一条曲线（SVG 覆盖层） */
+function drawMatchLine(li, ri, color){
+  const wrap=document.getElementById('matchWrap'), svg=document.getElementById('matchSvg');
+  if(!wrap||!svg) return;
+  const le=document.getElementById('m-l'+li), re=document.getElementById('m-r'+ri);
+  if(!le||!re) return;
+  const wb=wrap.getBoundingClientRect();
+  svg.setAttribute('width', wb.width); svg.setAttribute('height', wb.height);
+  svg.setAttribute('viewBox', '0 0 '+wb.width+' '+wb.height);
+  const lb=le.getBoundingClientRect(), rb=re.getBoundingClientRect();
+  const x1=lb.right-wb.left-2, y1=lb.top+lb.height/2-wb.top;
+  const x2=rb.left-wb.left+2, y2=rb.top+rb.height/2-wb.top;
+  const id='ml-'+li+'-'+ri;
+  let line=document.getElementById(id);
+  if(!line){
+    line=document.createElementNS('http://www.w3.org/2000/svg','path');
+    line.setAttribute('id',id); svg.appendChild(line);
+  }
+  const mx=(x1+x2)/2;
+  line.setAttribute('d','M '+x1+' '+y1+' C '+mx+' '+y1+', '+mx+' '+y2+', '+x2+' '+y2);
+  line.setAttribute('fill','none');
+  line.setAttribute('stroke', color||'#ffb648');
+  line.setAttribute('stroke-width','3');
+  line.setAttribute('stroke-linecap','round');
+  line.setAttribute('opacity','0.92');
+  if(S.matchLines) S.matchLines[li]=ri;
+}
+/* 判定后把所有连线改成对/错颜色 */
+function colorMatchLines(){
+  const q=LEVELS[S.level].qs[S.qi];
+  if(!S.matchLines) return;
+  for(const li in S.matchLines){
+    const ri=S.matchLines[li];
+    drawMatchLine(+li, ri, ri===q.a[+li] ? '#5bbf87' : '#e74c3c');
+  }
+}
+/* 重绘所有连线（窗口尺寸变化时） */
+function redrawMatchLines(){
+  if(!document.getElementById('matchSvg')) return;
+  const svg=document.getElementById('matchSvg'); if(svg) svg.innerHTML='';
+  if(S.matchLines) for(const li in S.matchLines) drawMatchLine(+li,S.matchLines[li]);
+}
+window.addEventListener('resize', redrawMatchLines);
+
 function tapMatch(side, idx){
   if(S.answered) return;
   const q = LEVELS[S.level].qs[S.qi];
@@ -580,6 +640,7 @@ function tapMatch(side, idx){
     const le=document.getElementById('m-l'+li), re=document.getElementById('m-r'+idx);
     if(le){ le.classList.add('done'); le.textContent = q.left[li]+' ✓'; }
     if(re){ re.classList.add('done'); re.textContent = q.right[idx]+' ✓'; }
+    drawMatchLine(li, idx);
   }
 }
 function checkMatch(){
@@ -592,14 +653,21 @@ function checkMatch(){
   for(let i=0;i<q.left.length;i++){ if(S.matchDone['l'+i] !== q.a[i]){ ok=false; break; } }
   resolve(ok, null, null);
 }
+/* 供错题回顾用：给出该题的正确答案文字 */
+function answerText(q){
+  if(q.type==='match') return q.left.map((w,i)=>w+'='+q.right[q.a[i]]).join('，');
+  if(q.type==='order') return q.a;
+  if(q.opts) return q.opts[q.a];
+  return String(q.a);
+}
 function listenTap(){
-  if(S.listenCount >= 2) return;
+  if(S.listenCount >= 3) return;
   const q = LEVELS[S.level].qs[S.qi];
   S.listenCount = (S.listenCount || 0) + 1;
-  const left = 2 - S.listenCount;
+  const left = 3 - S.listenCount;
   const btn = document.getElementById('listenBtn');
   if(btn){
-    btn.textContent = left > 0 ? `🔊 再听一次（还可听 ${left} 次）` : '🔊 已听完 2 次';
+    btn.textContent = left > 0 ? `🔊 再听一次（还可听 ${left} 次）` : '🔊 已听完 3 次';
     if(left <= 0) btn.disabled = true;
   }
   const ok = speak(q.speak);
@@ -668,11 +736,17 @@ function resolve(ok, el, data){
     if(el){ el.classList.add('correct'); document.querySelectorAll('.opt').forEach(o=>{ if(o!==el) o.classList.add('dim'); }); }
     if(q.type==='match'){
       document.querySelectorAll('.match-item').forEach(e=>e.classList.add('correct'));
+      colorMatchLines();
     }
     fb.innerHTML = `<div class="feedback good">✅ <b>答对啦！Отлично!</b> +${gained}分 ${S.combo>=2?`（🔥连击x${S.combo}）`:''}<br>${q.ex}</div>`;
     document.querySelector('.score').textContent = S.score+'分';
   } else {
     S.combo=0; S.wrong++; S.hearts--;
+    /* 记录错题，供最终证书页回顾 */
+    S.wrongList = S.wrongList || [];
+    if(!S.wrongList.some(w=>w.level===S.level && w.qi===S.qi && w.q===q.q)){
+      S.wrongList.push({level:S.level, qi:S.qi, q:q.q, sub:q.sub||'', ans:answerText(q), ex:q.ex||''});
+    }
     sBad();
     document.getElementById('app').classList.add('shake');
     setTimeout(()=>document.getElementById('app').classList.remove('shake'),450);
@@ -689,6 +763,7 @@ function resolve(ok, el, data){
       const pairs = q.left.map((w,i)=>`${w} = ${q.right[q.a[i]]}`).join('，');
       rightText = `正确配对：<b>${pairs}</b><br>`;
       document.querySelectorAll('.match-item').forEach(e=>e.classList.add('dim'));
+      colorMatchLines();
     } else {
       rightText = `参考答案：<b>${q.a}</b><br>你的答案：${data}<br>`;
     }
@@ -837,6 +912,25 @@ function flowerCelebration(){
 }
 
 function finalScreen(){
+  const wrongs = S.wrongList || [];
+  let reviewHtml = '';
+  if(wrongs.length){
+    const items = wrongs.map((w,i)=>`
+      <div class="review-item">
+        <div class="review-q">${i+1}. ${w.q}</div>
+        ${w.sub?`<div class="review-sub">${w.sub}</div>`:''}
+        <div class="review-a">✅ 正确答案：${w.ans}</div>
+        <div class="review-ex">💡 ${w.ex}</div>
+      </div>`).join('');
+    reviewHtml = `
+    <div class="review-box">
+      <div class="review-title">📝 错题回顾 · Повторение ошибок <span class="review-count">${wrongs.length} 题</span></div>
+      <div class="review-hint">复习一下做错的题目 / Повтори ошибки, чтобы запомнить</div>
+      ${items}
+    </div>`;
+  } else {
+    reviewHtml = `<div class="review-box"><div class="review-title">🎉 全对！没有错题 · Ошибок нет!</div></div>`;
+  }
   $app.innerHTML = `
   <div class="screen">
     <div class="topbar">
@@ -844,6 +938,8 @@ function finalScreen(){
       <span style="font-weight:800;font-size:18px">🏅 毕业证书 · Сертификат</span>
       <span style="width:26px"></span>
     </div>
+    ${reviewHtml}
+    <div class="cert-title">🏅 毕业证书 · Сертификат</div>
     <img id="certImg" class="cert-img" alt="证书卡片">
     <canvas id="certCanvas" style="display:none"></canvas>
     <div style="margin-top:14px">
